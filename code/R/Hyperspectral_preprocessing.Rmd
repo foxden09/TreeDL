@@ -1,0 +1,97 @@
+---
+title: "Hyperspectral_XiongFox"
+output: html_document
+date: "2024-10-21"
+---
+
+```{r}
+library(sf)
+library(raster)
+library(terra)
+library(ggplot2)
+library(dplyr)
+library(rgdal)
+```
+
+```{r}
+hyspec_file = '~/Documents/GitHub/TreeSpeciesClassify_DL/data/Hyperspectral/Tile_33'
+tile33 = terra::rast(hyspec_file)
+plot(tile33)
+```
+
+
+```{r}
+### calculate bands, to make RGB composite ###
+# This data is in range 380-1050nm, 48 bands
+bandwidth = (1050-380)/48
+
+band_r = round((665-380)/bandwidth)  # red: 700nm
+band_g = round((560-380)/bandwidth)  # green: 550nm
+band_b = round((492-380)/bandwidth)  # blue: 480nm
+band_nir = round((833-380)/bandwidth)  # NIR
+
+RGB(tile33) <- c(band_r,band_g,band_b)
+plot(tile33)
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
