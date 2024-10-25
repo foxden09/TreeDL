@@ -10,13 +10,29 @@ library(raster)
 library(terra)
 library(ggplot2)
 library(dplyr)
-library(rgdal)
+library(lidR)
 ```
 
+```{r tile32[[15]]}
+hyspec_file = '~/Documents/GitHub/TreeSpeciesClassify_DL/sample_data/hyperspectral/Tile_32'
+tile32 = terra::rast(hyspec_file)
+remove_negatives <- function(x) {
+  x[x < 0] <- 0
+  return(x)
+}
+```
+
+
+```{r tile32[[15]]}
+tile32_filt <- app(tile32, remove_negatives)
+dev.new(width=10, height=8)
+par(mfrow = c(1, 1))
+plot(tile32)
+
+```
 ```{r}
-hyspec_file = '~/Documents/GitHub/TreeSpeciesClassify_DL/data/Hyperspectral/Tile_33'
-tile33 = terra::rast(hyspec_file)
-plot(tile33)
+min_val <- global(tile32, "min", na.rm = TRUE)[[1]]
+max_val <- global(tile32, "max", na.rm = TRUE)[[1]]
 ```
 
 
@@ -29,10 +45,43 @@ band_r = round((665-380)/bandwidth)  # red: 700nm
 band_g = round((560-380)/bandwidth)  # green: 550nm
 band_b = round((492-380)/bandwidth)  # blue: 480nm
 band_nir = round((833-380)/bandwidth)  # NIR
+```
 
-RGB(tile33) <- c(band_r,band_g,band_b)
-plot(tile33)
 
+```{r}
+RGB(tile32) <- c(band_r,band_g,band_b)
+
+
+min_val <- global(tile32, "min", na.rm = TRUE)[[1]]
+max_val <- global(tile32, "max", na.rm = TRUE)[[1]]
+
+min_max_normalization <- function(x) {
+  (x - min_val) / (max_val - min_val)
+}
+tile32_filtered <- app(tile32, min_max_normalization)
+plot(tile32_filtered)
+
+```
+
+
+```{r}
+ext(tile32)
+```
+
+
+```{r}
+plot(tile32_filtered[[15]])
+zoom(tile32_filtered[[15]])
+```
+
+
+```{r}
+shapefile_data <- st_read("~/Documents/GitHub/TreeSpeciesClassify_DL/sample_data/trees_on_sf_f_5.shp")
+```
+
+
+```{r}
+plot(st_geometry(shapefile_data))
 ```
 
 
@@ -41,30 +90,23 @@ plot(tile33)
 
 
 ```{r}
+penn_crs <- st_crs(shapefile_data)
+crs(tile32_filtered) <- penn_crs
 ```
 
 
 ```{r}
+hyper_extents_projected <- st_transform(tile32_filtered, st_crs(shapefile_data))
 ```
 
 
 ```{r}
+las_seg <- readLAS("~/Documents/GitHub/TreeSpeciesClassify_DL/sample_data/leafon_segmented.las")
 ```
 
 
 ```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
+x <- plot(las_seg, bg = "white", size = 4, color = "treeID", height = TRUE, treetops = TRUE)
 ```
 
 
